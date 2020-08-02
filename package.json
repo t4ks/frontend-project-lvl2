@@ -1,0 +1,28 @@
+{
+  "name": "gendiff",
+  "version": "1.0.0",
+  "description": "Compares two configuration files and shows a difference.",
+  "main": "index.js",
+  "dependencies": {
+    "commander": "^6.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/t4ks/frontend-project-lvl2.git"
+  },
+  "keywords": [
+    "diffs",
+    "difference",
+    "configs"
+  ],
+  "author": "Pavel Sirotkin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/t4ks/frontend-project-lvl2/issues"
+  },
+  "homepage": "https://github.com/t4ks/frontend-project-lvl2#readme"
+}
