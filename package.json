@@ -6,10 +6,12 @@
   "dependencies": {
     "commander": "^6.0.0"
   },
+  "type": "module",
   "devDependencies": {},
   "scripts": {
     "test": "make test"
   },
+  "bin": "./gendiff.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/t4ks/frontend-project-lvl2.git"
