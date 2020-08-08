@@ -2,7 +2,7 @@
 
 import pkg from 'commander';
 import packageConfig from '../package.json';
-import genDiff from '../gendiff.js';
+import genDiff from '../src/gendiff.js';
 
 const { program } = pkg;
 

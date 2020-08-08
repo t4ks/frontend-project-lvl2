@@ -5,8 +5,11 @@ publish:
 	npm publish --dry-run
 
 run:
-	node --experimental-json-module ./gendiff.js
+	node --experimental-json-module ./bin/gendiff.js
 
 lint:
 	npx eslint .
+
+test:
+	npx jest --colors
 
