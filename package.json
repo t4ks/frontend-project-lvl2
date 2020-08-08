@@ -4,7 +4,8 @@
   "description": "Compares two configuration files and shows a difference.",
   "main": "./src/gendiff.js",
   "dependencies": {
-    "commander": "^6.0.0"
+    "commander": "^6.0.0",
+    "lodash": "^4.17.19"
   },
   "type": "module",
   "devDependencies": {
