@@ -2,16 +2,20 @@
   "name": "gendiff",
   "version": "1.0.0",
   "description": "Compares two configuration files and shows a difference.",
-  "main": "index.js",
+  "main": "gendiff.js",
   "dependencies": {
     "commander": "^6.0.0"
   },
   "type": "module",
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.1"
+  },
   "scripts": {
     "test": "make test"
   },
-  "bin": "./gendiff.js",
+  "bin": "./cli/gendiff.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/t4ks/frontend-project-lvl2.git"

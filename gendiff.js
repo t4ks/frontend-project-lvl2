@@ -1,13 +1,5 @@
-#! /usr/bin/env node
+import fs from 'fs';
 
-import pkg from 'commander';
-// import packageConfig from './package.json';
-
-const { program } = pkg;
-
-program.storeOptionsAsProperties(false);
-
-program.version('1.0.0')
-    .description('Compares two configuration files and shows a difference.')
-
-program.parse(process.argv);
+export default (filepath1, filepath2) => {
+    const f1 = fs.readFileSync(filepath1)
+}

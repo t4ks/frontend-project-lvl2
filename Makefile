@@ -7,3 +7,6 @@ publish:
 run:
 	node --experimental-json-module ./gendiff.js
 
+lint:
+	npx eslint .
+
