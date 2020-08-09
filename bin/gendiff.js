@@ -2,7 +2,7 @@
 
 import pkg from 'commander';
 import packageConfig from '../package.json';
-import genDiff from '../src/gendiff.js';
+import genDiff from '../gendiff.js';
 
 const { program } = pkg;
 
@@ -10,8 +10,8 @@ program.storeOptionsAsProperties(false);
 
 program.version(packageConfig.version)
   .description(packageConfig.description)
-  .option('-f, --format [type]', 'output format')
+  .option('-f, --format [type]', 'output format');
 
 program.parse(process.argv);
 
-genDiff('1', '2', '3');
+genDiff('1', '2');
