@@ -7,6 +7,7 @@
     "commander": "^6.0.0",
     "lodash": "^4.17.19"
   },
+  "type": "module",
   "devDependencies": {
     "@babel/cli": "^7.10.5",
     "@babel/core": "^7.11.1",
