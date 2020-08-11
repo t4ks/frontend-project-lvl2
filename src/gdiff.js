@@ -19,7 +19,7 @@ const textFormat = (parsedJSONs) => {
     }
     return acc;
   }, '');
-  return `\n{\n${lines}}`;
+  return `{\n${lines}}`;
 };
 
 export default (filepath1, filepath2) => {
