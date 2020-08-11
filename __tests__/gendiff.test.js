@@ -9,7 +9,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 test('diff 1', () => {
-  expect(genDiff(path.resolve(__dirname, 'file1.json'), path.resolve(__dirname, 'file2.json'))).toEqual(`
+  expect(
+    genDiff(
+      path.resolve(__dirname, '..', '__fixtures__', 'file1.json'),
+      path.resolve(__dirname, '..', '__fixtures__', 'file2.json'),
+    ),
+  ).toEqual(`
 {
   - follow: false
     host: hexlet.io
