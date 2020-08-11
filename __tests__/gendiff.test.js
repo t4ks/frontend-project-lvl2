@@ -1,6 +1,12 @@
 /* eslint-disable no-undef */
+import { fileURLToPath } from 'url';
 import path from 'path';
 import genDiff from '../gendiff';
+
+/* eslint-disable no-underscore-dangle */
+const __filename = fileURLToPath(import.meta.url);
+/* eslint-disable no-underscore-dangle */
+const __dirname = path.dirname(__filename);
 
 test('diff 1', () => {
   expect(genDiff(path.resolve(__dirname, 'file1.json'), path.resolve(__dirname, 'file2.json'))).toEqual(`

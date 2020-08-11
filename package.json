@@ -19,12 +19,16 @@
     "jest": "^26.2.2"
   },
   "scripts": {
-    "test": "make test"
+    "test": "npx -n --experimental-vm-modules jest --colors"
   },
   "bin": "./bin/gendiff.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/t4ks/frontend-project-lvl2.git"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {}
   },
   "keywords": [
     "diffs",

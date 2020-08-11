@@ -11,5 +11,5 @@ lint:
 	npx eslint .
 
 test:
-	npx jest --colors
+	npm test
 
