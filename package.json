@@ -16,7 +16,7 @@
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.20.1",
-    "jest": "^26.2.2"
+    "jest": "^26.4.0"
   },
   "scripts": {
     "test": "npx -n --experimental-vm-modules jest --colors"
