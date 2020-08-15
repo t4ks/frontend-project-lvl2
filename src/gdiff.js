@@ -1,9 +1,8 @@
 /* eslint-disable no-param-reassign */
-import fs from 'fs';
 import _ from 'lodash';
 import parser from './parser.js';
 
-const jsonFormat = (parsedJSONs) => {
+const textFormat = (parsedJSONs) => {
   const lines = parsedJSONs.reduce((acc, elem) => {
     switch (elem.type) {
       case 'modified':
@@ -51,5 +50,5 @@ export default (filepath1, filepath2) => {
       return acc;
     }, []);
 
-  return jsonFormat(_.sortBy(result, (o) => o.key));
+  return textFormat(_.sortBy(result, (o) => o.key));
 };
