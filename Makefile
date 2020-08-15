@@ -14,4 +14,4 @@ test:
 	npm test
 
 coverage:
-	npm coverage
+	npm run coverage
