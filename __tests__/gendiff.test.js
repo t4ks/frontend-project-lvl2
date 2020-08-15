@@ -90,3 +90,20 @@ test('diff flat json two equals files', () => {
     timeout: 50
 }`);
 });
+
+test('diff jsons without extention', () => {
+  expect(
+    genDiff(
+      path.resolve(__dirname, '..', '__fixtures__', 'file1_1'),
+      path.resolve(__dirname, '..', '__fixtures__', 'file2.json'),
+    ),
+  ).toEqual(`
+{
+  - follow: false
+    host: hexlet.io
+  - proxy: 123.234.53.22
+  - timeout: 50
+  + timeout: 20
+  + verbose: true
+}`);
+});
