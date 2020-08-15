@@ -1,8 +1,9 @@
 /* eslint-disable no-param-reassign */
 import fs from 'fs';
 import _ from 'lodash';
+import parser from './parser.js';
 
-const textFormat = (parsedJSONs) => {
+const jsonFormat = (parsedJSONs) => {
   const lines = parsedJSONs.reduce((acc, elem) => {
     switch (elem.type) {
       case 'modified':
@@ -23,8 +24,8 @@ const textFormat = (parsedJSONs) => {
 };
 
 export default (filepath1, filepath2) => {
-  const f1 = JSON.parse(fs.readFileSync(filepath1, { encoding: 'utf-8' }));
-  const f2 = JSON.parse(fs.readFileSync(filepath2, { encoding: 'utf-8' }));
+  const f1 = parser(filepath1);
+  const f2 = parser(filepath2);
 
   const result = _.concat(Object.keys(f1), Object.keys(f2))
     .reduce((acc, k) => {
@@ -50,5 +51,5 @@ export default (filepath1, filepath2) => {
       return acc;
     }, []);
 
-  return textFormat(_.sortBy(result, (o) => o.key));
+  return jsonFormat(_.sortBy(result, (o) => o.key));
 };
