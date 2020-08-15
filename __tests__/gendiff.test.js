@@ -124,4 +124,3 @@ test('diff inis', () => {
   + verbose: true
 }`);
 });
-
