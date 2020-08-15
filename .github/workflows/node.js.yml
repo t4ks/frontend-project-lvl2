@@ -10,14 +10,11 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
+  linter:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [14.x]
-
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
@@ -26,4 +23,24 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: make install
     - run: make lint
-    - run: make test
+
+  tests:
+    needs: [ linter ]
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Test and publish code coverage
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: make install
+    - uses: paambaati/codeclimate-action@v2.2.4
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_TEST_COVERAGE }}
+      with:
+        coverageCommand: make coverage
