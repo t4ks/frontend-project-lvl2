@@ -33,8 +33,7 @@ export default (filepath1, filepath2) => {
       }
 
       // Rules
-      // eslint-disable-next-line eqeqeq
-      const modified = _.has(f1, k) && _.has(f2, k) && _.get(f1, k) != _.get(f2, k);
+      const modified = _.has(f1, k) && _.has(f2, k) && _.get(f1, k) !== _.get(f2, k);
       const deleted = !_.has(f2, k) && _.has(f1, k);
       const added = _.has(f2, k) && !_.has(f1, k) && !deleted;
 

@@ -125,18 +125,3 @@ test('diff inis', () => {
 }`);
 });
 
-
-test('diff the same ini and json', () => {
-  expect(
-    genDiff(
-      path.resolve(__dirname, '..', '__fixtures__', 'file1.json'),
-      path.resolve(__dirname, '..', '__fixtures__', 'file1.ini'),
-    ),
-  ).toEqual(`
-{
-    follow: false
-    host: hexlet.io
-    proxy: 123.234.53.22
-    timeout: 50
-}`);
-});
