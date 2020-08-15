@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import _ from 'lodash';
-import parser from './parser.js';
+import parser from './parsers.js';
 
 const textFormat = (parsedJSONs) => {
   const lines = parsedJSONs.reduce((acc, elem) => {
@@ -33,7 +33,8 @@ export default (filepath1, filepath2) => {
       }
 
       // Rules
-      const modified = _.has(f1, k) && _.has(f2, k) && _.get(f1, k) !== _.get(f2, k);
+      // eslint-disable-next-line eqeqeq
+      const modified = _.has(f1, k) && _.has(f2, k) && _.get(f1, k) != _.get(f2, k);
       const deleted = !_.has(f2, k) && _.has(f1, k);
       const added = _.has(f2, k) && !_.has(f1, k) && !deleted;
 

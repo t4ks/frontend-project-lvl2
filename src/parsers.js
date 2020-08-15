@@ -1,9 +1,11 @@
 import path from 'path';
 import yaml from 'js-yaml';
+import ini from 'ini';
 import fs from 'fs';
 
 const jsonParser = (data) => JSON.parse(data);
 const yamlParser = (data) => yaml.load(data);
+const iniParser = (data) => ini.parse(data);
 
 const getParser = (ext) => {
   switch (ext) {
@@ -11,6 +13,8 @@ const getParser = (ext) => {
       return jsonParser;
     case '.yaml':
       return yamlParser;
+    case '.ini':
+      return iniParser;
     default:
       return jsonParser;
   }
