@@ -2,25 +2,30 @@
 import _ from 'lodash';
 import parser from './parsers.js';
 
+const stylish = (ast) => {
+  const indent = '  ';
+  const addSymbol = '+';
+  const deleteSymbol = '-';
 
-const textFormat = (parsedJSONs) => {
-  const lines = parsedJSONs.reduce((acc, elem) => {
-    switch (elem.type) {
-      case 'modified':
-        acc += `  - ${elem.key}: ${elem.value.old}\n  + ${elem.key}: ${elem.value.new}\n`;
-        break;
-      case 'deleted':
-        acc += `  - ${elem.key}: ${elem.value.old}\n`;
-        break;
-      case 'added':
-        acc += `  + ${elem.key}: ${elem.value.new}\n`;
-        break;
-      default:
-        acc += `    ${elem.key}: ${elem.value.old}\n`;
+  const normalize = (item, depth = 1) => {
+    const type = _.get(item, 'type');
+    if ((type === undefined) && _.has(item, 'children')) {
+      return `${item.name}: \n${item.children.map((o) => normalize(o, depth + 1))}`;
     }
-    return acc;
-  }, '');
-  return `\n{\n${lines}}`;
+    if (type === 'modified') {
+      return `${indent.repeat(depth)}${deleteSymbol} ${item.name}: ${item.value.old}`
+        .concat('\n', `${indent.repeat(depth)}${addSymbol} ${item.name}: ${item.value.new}`);
+    }
+    if (type === 'deleted') {
+      return `${indent.repeat(depth)}${deleteSymbol} ${item.name}: ${item.value.old}`;
+    }
+    if (type === 'added') {
+      return `\n${indent.repeat(depth)}${addSymbol} ${item.name}: ${item.value.new}`;
+    }
+    return `\n${indent.repeat(depth)} ${item.name}: ${item.value.old}`;
+  };
+
+  return ast.map(normalize);
 };
 
 
@@ -148,60 +153,57 @@ ast
 
 */
 
-
 export default (filepath1, filepath2) => {
   const f1 = parser(filepath1);
   const f2 = parser(filepath2);
 
   const iter = (acc, entry, curPath) => {
-    const [name, value_from_f2] = entry;
+    const [name, valueFromFile2] = entry;
     curPath.push(name);
-    
-    const node = {
-      name: name,
-    }
 
-    const value_from_f1 = _.get(f1, curPath)
+    const node = { name };
 
-    if (( _.isPlainObject(value_from_f1)) && ( _.isPlainObject(value_from_f2)))  {
-      node.children = Object.entries(value_from_f2).reduce((curAcc, entry) => iter(curAcc, entry, curPath), []);
+    const valueFromFile1 = _.get(f1, curPath);
+
+    if ((_.isPlainObject(valueFromFile1)) && (_.isPlainObject(valueFromFile2))) {
+      node.children = Object
+        .entries(valueFromFile2)
+        .reduce((curAcc, item) => iter(curAcc, item, curPath), []);
       acc.push(node);
       return acc;
     }
-    
-    else if (value_from_f1 === undefined) {
+
+    if (valueFromFile1 === undefined) {
       node.type = 'added';
-    }
-
-
-    else if (value_from_f1 !== value_from_f2) {
-      node.type = 'modified'
+    } else if (valueFromFile1 !== valueFromFile2) {
+      node.type = 'modified';
     }
 
     node.value = {
-      old: value_from_f1,
-      new: value_from_f2,
-    }
+      old: valueFromFile1,
+      new: valueFromFile2,
+    };
 
     acc.push(node);
     curPath.pop();
     return acc;
-  }
+  };
 
   const accum = Object.entries(f1)
-  .filter((entry) => !_.has(f2, entry[0]))
-  .map((entry) => {
-    const [key, value] = entry;
-    return {
-      name: key,
-      type: 'deleted',
-      value: {
-        old: value,
-      },
-    }
-  });
+    .filter((entry) => !_.has(f2, entry[0]))
+    .map((entry) => {
+      const [key, value] = entry;
+      return {
+        name: key,
+        type: 'deleted',
+        value: {
+          old: value,
+        },
+      };
+    });
 
   const ast = Object.entries(f2).reduce((acc, entry) => iter(acc, entry, []), accum);
 
   console.log('AST -> ', JSON.stringify(ast, null, 2));
+  console.log('STYLISH -> ', stylish(ast));
 };
