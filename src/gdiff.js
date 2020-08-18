@@ -3,26 +3,40 @@ import _ from 'lodash';
 import parser from './parsers.js';
 
 const stylish = (ast) => {
-  const indent = '  ';
   const addSymbol = '+';
   const deleteSymbol = '-';
+
+  const formatValue = (value) => {
+    if (_.isPlainObject(value)) {
+      return _.map(value, formatValue);
+    }
+    value
+  }
+
+  const buildRow = (indent, symbol, name, value) => {
+    return `${indent}${symbol}${name}: ${value}`;
+  }
+
+  const makeRow = (item, type, depth) => {
+    const indent = '  '.repeat(depth);
+    if (type === 'modified') {
+      return buildRow(indent, deleteSymbol, item.name, item.value.old).concat('\n', buildRow(indent, addSymbol, item.name, item.value.new));
+    }
+    if (type === 'deleted') {
+      return `\n${buildRow(indent, deleteSymbol, item.name, item.value.old)}`;
+    }
+    if (type === 'added') {
+      return `\n${buildRow(indent, addSymbol, item.name, item.value.new)}`;
+    }
+    return `\n${buildRow(indent, '', item.name, item.value.old)}`;
+  };
 
   const normalize = (item, depth = 1) => {
     const type = _.get(item, 'type');
     if ((type === undefined) && _.has(item, 'children')) {
       return `${item.name}: \n${item.children.map((o) => normalize(o, depth + 1))}`;
     }
-    if (type === 'modified') {
-      return `${indent.repeat(depth)}${deleteSymbol} ${item.name}: ${item.value.old}`
-        .concat('\n', `${indent.repeat(depth)}${addSymbol} ${item.name}: ${item.value.new}`);
-    }
-    if (type === 'deleted') {
-      return `${indent.repeat(depth)}${deleteSymbol} ${item.name}: ${item.value.old}`;
-    }
-    if (type === 'added') {
-      return `\n${indent.repeat(depth)}${addSymbol} ${item.name}: ${item.value.new}`;
-    }
-    return `\n${indent.repeat(depth)} ${item.name}: ${item.value.old}`;
+    return makeRow(item, type, depth);
   };
 
   return ast.map(normalize);
