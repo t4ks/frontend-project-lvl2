@@ -5,41 +5,47 @@ import parser from './parsers.js';
 const stylish = (ast) => {
   const addSymbol = '+';
   const deleteSymbol = '-';
+  const space = ' ';
 
-  const formatValue = (value) => {
+  const makeRow = (symbol, name, value, depth, indents) => {
+    const depthIndents = `${space.repeat(indents * depth)}`;
+    const key = `${depthIndents}${symbol} ${name}`;
     if (_.isPlainObject(value)) {
-      return _.map(value, formatValue);
+      return `${key}: {\n${Object.entries(value).map((entry) => makeRow('', ...entry, depth + 1, indents)).join('')}${depthIndents}}\n`;
     }
-    value
-  }
 
-  const buildRow = (indent, symbol, name, value) => {
-    return `${indent}${symbol}${name}: ${value}`;
-  }
-
-  const makeRow = (item, type, depth) => {
-    const indent = '  '.repeat(depth);
-    if (type === 'modified') {
-      return buildRow(indent, deleteSymbol, item.name, item.value.old).concat('\n', buildRow(indent, addSymbol, item.name, item.value.new));
-    }
-    if (type === 'deleted') {
-      return `\n${buildRow(indent, deleteSymbol, item.name, item.value.old)}`;
-    }
-    if (type === 'added') {
-      return `\n${buildRow(indent, addSymbol, item.name, item.value.new)}`;
-    }
-    return `\n${buildRow(indent, '', item.name, item.value.old)}`;
+    return `${key}: ${value}\n`;
   };
 
-  const normalize = (item, depth = 1) => {
-    const type = _.get(item, 'type');
-    if ((type === undefined) && _.has(item, 'children')) {
-      return `${item.name}: \n${item.children.map((o) => normalize(o, depth + 1))}`;
+  const getSymbolType = (type) => {
+    switch (type) {
+      case 'added':
+        return [addSymbol];
+      case 'deleted':
+        return [deleteSymbol];
+      case 'modified':
+        return [addSymbol, deleteSymbol];
+      default:
+        return [' '];
     }
-    return makeRow(item, type, depth);
   };
 
-  return ast.map(normalize);
+  const getValue = (symbol, value) => (symbol === addSymbol ? value.new : value.old);
+
+  const formatNode = (node, depth, indents = 4) => {
+    const type = _.get(node, 'type');
+    const hasChilds = _.has(node, 'children');
+    const depthIndents = space.repeat(indents * depth);
+    const typeSymbols = getSymbolType(type);
+
+    if (hasChilds) {
+      return `${depthIndents}${node.name}: {\n${node.children.map((n) => formatNode(n, depth + 1, indents)).join('')}${depthIndents}}\n`;
+    }
+
+    return typeSymbols.map((s) => makeRow(s, node.name, getValue(s, node.value), depth, indents)).join('');
+  };
+
+  return ast.map((a) => formatNode(a, 1)).join('');
 };
 
 
@@ -219,5 +225,5 @@ export default (filepath1, filepath2) => {
   const ast = Object.entries(f2).reduce((acc, entry) => iter(acc, entry, []), accum);
 
   console.log('AST -> ', JSON.stringify(ast, null, 2));
-  console.log('STYLISH -> ', stylish(ast));
+  console.log(`STYLISH ->\n\n${stylish(ast)}`);
 };
