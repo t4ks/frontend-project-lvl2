@@ -8,10 +8,11 @@ const stylish = (ast) => {
   const space = ' ';
 
   const makeRow = (symbol, name, value, depth, indents) => {
-    const depthIndents = `${space.repeat(indents * depth)}`;
-    const key = `${depthIndents}${symbol} ${name}`;
+    const indent = symbol === '' ? '' : `${symbol}${space}`;
+    const depthIndents = indent === '' ? `${space.repeat(Math.imul(indents, depth))}` : `${space.repeat(Math.imul(indents, depth) - 2)}`;
+    const key = `${depthIndents}${indent}${name}`;
     if (_.isPlainObject(value)) {
-      return `${key}: {\n${Object.entries(value).map((entry) => makeRow('', ...entry, depth + 1, indents)).join('')}${depthIndents}}\n`;
+      return `${key}: {\n${Object.entries(value).map((entry) => makeRow('', ...entry, depth + 1, indents)).join('')}${space.repeat(depthIndents.length + indent.length)}}\n`;
     }
 
     return `${key}: ${value}\n`;
@@ -26,7 +27,7 @@ const stylish = (ast) => {
       case 'modified':
         return [addSymbol, deleteSymbol];
       default:
-        return [' '];
+        return [''];
     }
   };
 
@@ -45,113 +46,128 @@ const stylish = (ast) => {
     return typeSymbols.map((s) => makeRow(s, node.name, getValue(s, node.value), depth, indents)).join('');
   };
 
-  return ast.map((a) => formatNode(a, 1)).join('');
+  return `{\n${ast.map((a) => formatNode(a, 1)).join('')}}`;
 };
 
-
-/* f1
-{
-  "common": {
-    "setting1": "Value 1",
-    "setting2": 200,
-    "setting3": true,
-    "setting6": {
-      "key": "value",
-      "doge": {
-        "wow": "too much"
-      }
-    }
-  },
-  "group1": {
-    "baz": "bas",
-    "foo": "bar",
-    "nest": {
-      "key": "value"
-    }
-  },
-  "group2": {
-    "abc": 12345,
-    "deep": {
-      "id": 45
-    }
-  }
-}
-
-f2 
-
-{
-  "common": {
-    "follow": false,
-    "setting1": "Value 1",
-    "setting3": {
-      "key": "value"
-    },
-    "setting4": "blah blah",
-    "setting5": {
-      "key5": "value5"
-    },
-    "setting6": {
-      "key": "value",
-      "ops": "vops",
-      "doge": {
-        "wow": "so much"
-      }
-    }
-  },
-
-  "group1": {
-    "foo": "bar",
-    "baz": "bars",
-    "nest": "str"
-  },
-
-  "group3": {
-    "fee": 100500,
-    "deep": {
-      "id": {
-        "number": 45
-      }
-    }
-  }
-}
-
-ast 
-
+/* 
+['  - group2: {\n        abc: 12345\n        deep: {\n                id: 45\n        }\n                }\n']
 [
   {
-    name: "common",
-    children: [
+    "name": "group2",
+    "type": "deleted",
+    "value": {
+      "old": {
+        "abc": 12345,
+        "deep": {
+          "id": 45
+        }
+      }
+    }
+  },
+  {
+    "name": "common",
+    "children": [
       {
-        name: "follow",
-        children: [],
-        type: "deleted",
-        value: false,
+        "name": "follow",
+        "type": "added",
+        "value": {
+          "new": false
+        }
       },
       {
-        name: "setting1",
-        value: "Value 1",
-        type: "same",
-        children: [],
+        "name": "setting1",
+        "value": {
+          "old": "Value 1",
+          "new": "Value 1"
+        }
       },
       {
-        name: "setting6",
-        type: "modified",
-        children: [
+        "name": "setting3",
+        "type": "modified",
+        "value": {
+          "old": true,
+          "new": {
+            "key": "value"
+          }
+        }
+      },
+      {
+        "name": "setting4",
+        "type": "added",
+        "value": {
+          "new": "blah blah"
+        }
+      },
+      {
+        "name": "setting5",
+        "type": "added",
+        "value": {
+          "new": {
+            "key5": "value5"
+          }
+        }
+      },
+      {
+        "name": "setting6",
+        "children": [
           {
-            name: "doge",
-            type: "modified",
-            children: [
+            "name": "key",
+            "value": {
+              "old": "value",
+              "new": "value"
+            }
+          },
+          {
+            "name": "ops",
+            "type": "added",
+            "value": {
+              "new": "vops"
+            }
+          },
+          {
+            "name": "doge",
+            "children": [
               {
-                name: "wow",
-                type: "modified",
-                value: {
-                  old: "too much",
-                  new: "so much"
+                "name": "wow",
+                "type": "modified",
+                "value": {
+                  "old": "too much",
+                  "new": "so much"
                 }
               }
             ]
           }
-        ],
+        ]
+      }
+    ]
+  },
+  {
+    "name": "group1",
+    "children": [
+      {
+        "name": "foo",
+        "value": {
+          "old": "bar",
+          "new": "bar"
+        }
+      },
+      {
+        "name": "baz",
+        "type": "modified",
+        "value": {
+          "old": "bas",
+          "new": "bars"
+        }
+      },
+      {
+        "name": "nest",
+        "type": "modified",
+        "value": {
+          "old": {
+            "key": "value"
+          },
+          "new": "str"
+        }
       }
     ]
   },
@@ -172,6 +188,7 @@ ast
 ]
 
 */
+
 
 export default (filepath1, filepath2) => {
   const f1 = parser(filepath1);
