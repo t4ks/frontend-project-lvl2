@@ -109,6 +109,18 @@ export default (filepath1, filepath2) => {
 
   const ast = Object.entries(f2).reduce((acc, entry) => iter(acc, entry, []), accum);
 
+  const a = _.sortBy(ast, (o) => o.name);
+
+  const inplaceSortByName = (obj) => {
+    if (_.has(obj, 'children')) {
+      obj.children = _.sortBy(obj.children, (o) => o.name);
+      return obj.children.map(inplaceSortByName);
+    }
+    return obj;
+  };
+
+  a.map(inplaceSortByName);
   console.log('AST -> ', JSON.stringify(ast, null, 2));
+  console.log('SORTED AST -> ', JSON.stringify(a, null, 2));
   console.log(`STYLISH ->\n\n${stylish(ast)}`);
 };
