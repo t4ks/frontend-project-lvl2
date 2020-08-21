@@ -34,7 +34,7 @@ const stylish = (ast) => {
       case 'deleted':
         return [deleteSymbol];
       case 'modified':
-        return [addSymbol, deleteSymbol];
+        return [deleteSymbol, addSymbol];
       default:
         return [emptySymbol];
     }
@@ -107,10 +107,6 @@ export default (filepath1, filepath2) => {
       };
     });
 
-  const ast = Object.entries(f2).reduce((acc, entry) => iter(acc, entry, []), accum);
-
-  const a = _.sortBy(ast, (o) => o.name);
-
   const inplaceSortByName = (obj) => {
     if (_.has(obj, 'children')) {
       obj.children = _.sortBy(obj.children, (o) => o.name);
@@ -118,9 +114,12 @@ export default (filepath1, filepath2) => {
     }
     return obj;
   };
+  console.log('F1 -> ', f1);
+  console.log('F2 -> ', f2);
+  const ast = _.sortBy(Object
+    .entries(f2)
+    .reduce((acc, entry) => iter(acc, entry, []), accum), (o) => o.name);
 
-  a.map(inplaceSortByName);
-  console.log('AST -> ', JSON.stringify(ast, null, 2));
-  console.log('SORTED AST -> ', JSON.stringify(a, null, 2));
-  console.log(`STYLISH ->\n\n${stylish(ast)}`);
+  ast.map(inplaceSortByName);
+  return `${stylish(ast)}`;
 };
