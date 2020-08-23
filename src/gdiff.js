@@ -52,19 +52,16 @@ export default (filepath1, filepath2) => {
 
     if ((_.isPlainObject(valueFromFile1)) && (_.isPlainObject(valueFromFile2))) {
       const curPath1 = [...curPath2];
-      node.children = [
-        ...Object
-          .keys(valueFromFile2)
-          .reduce((curAcc, item) => iter(curAcc, item, curPath2, trails), []),
-        ...Object
-          .keys(valueFromFile1)
-          .reduce((curAcc, item) => iter(curAcc, item, curPath1, trails), [])];
+      node.children = [...Object
+        .keys(valueFromFile2)
+        .reduce((curAcc, item) => iter(curAcc, item, curPath2, trails), []), ...Object
+        .keys(valueFromFile1)
+        .reduce((curAcc, item) => iter(curAcc, item, curPath1, trails), [])];
       acc.push(node);
       return acc;
     }
 
     node.type = getType(valueFromFile1, valueFromFile2);
-
     node.value = {
       old: valueFromFile1,
       new: valueFromFile2,
