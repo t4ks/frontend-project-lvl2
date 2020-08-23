@@ -23,7 +23,8 @@ Different formats can be compared between themselves.
 
 `make test`
 
+# Formatters
 
-## Stylish formatter
+## Stylish
 
 [![asciicast](https://asciinema.org/a/355084.svg)](https://asciinema.org/a/355084)
