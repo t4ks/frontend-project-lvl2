@@ -37,6 +37,14 @@ export default (filepath1, filepath2) => {
       };
     }));
 
+  const prepareValues = (value1, value2) => ({ old: value1, new: value2 });
+
+  const fillNode = (node, value1, value2) => {
+    node.type = getType(value1, value2);
+    node.value = prepareValues(value1, value2);
+    return node;
+  };
+
   const iter = (acc, name, curPath2 = [], trails = new Set()) => {
     curPath2.push(name);
     const p = curPath2.join('/');
@@ -46,9 +54,7 @@ export default (filepath1, filepath2) => {
     }
     trails.add(p);
     const node = { name };
-
-    const valueFromFile1 = _.get(f1, curPath2);
-    const valueFromFile2 = _.get(f2, curPath2);
+    const [valueFromFile1, valueFromFile2] = [_.get(f1, curPath2), _.get(f2, curPath2)];
 
     if ((_.isPlainObject(valueFromFile1)) && (_.isPlainObject(valueFromFile2))) {
       const curPath1 = [...curPath2];
@@ -61,13 +67,7 @@ export default (filepath1, filepath2) => {
       return acc;
     }
 
-    node.type = getType(valueFromFile1, valueFromFile2);
-    node.value = {
-      old: valueFromFile1,
-      new: valueFromFile2,
-    };
-
-    acc.push(node);
+    acc.push(fillNode(node, valueFromFile1, valueFromFile2));
     curPath2.pop();
     return acc;
   };
