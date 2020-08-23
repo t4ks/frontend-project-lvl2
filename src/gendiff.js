@@ -1,9 +1,8 @@
 /* eslint-disable no-param-reassign */
 import _ from 'lodash';
 import parser from './parsers.js';
-import stylish from './stylish.js';
 
-export default (filepath1, filepath2) => {
+export default (filepath1, filepath2, formatter) => {
   const f1 = parser(filepath1);
   const f2 = parser(filepath2);
 
@@ -84,5 +83,5 @@ export default (filepath1, filepath2) => {
     .reduce((acc, key) => iter(acc, key), getDeletedRootKeys(f1, f2)), (o) => o.name);
 
   ast.map(inplaceSortByName);
-  return `\n${stylish(ast)}`;
+  return `\n${formatter(ast)}`;
 };

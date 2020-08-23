@@ -6,3 +6,24 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/f6c860774b5974df7ba8/maintainability)](https://codeclimate.com/github/t4ks/frontend-project-lvl2/maintainability)
 
 [![Test Coverage](https://api.codeclimate.com/v1/badges/f6c860774b5974df7ba8/test_coverage)](https://codeclimate.com/github/t4ks/frontend-project-lvl2/test_coverage)
+
+# Overview
+Compares two configuration files and shows a difference. Supported formats:
+ - json (default)
+ - yaml
+ - ini
+
+Different formats can be compared between themselves.
+
+# Installation
+
+`make install`
+
+# Run tests 
+
+`make test`
+
+
+## Stylish formatter
+
+[![asciicast](https://asciinema.org/a/355084.svg)](https://asciinema.org/a/355084)

@@ -2,6 +2,7 @@
 import { fileURLToPath } from 'url';
 import path from 'path';
 import genDiff from '../gendiff';
+import stylish from '../src/stylish';
 
 /* eslint-disable no-underscore-dangle */
 const __filename = fileURLToPath(import.meta.url);
@@ -10,11 +11,12 @@ const __dirname = path.dirname(__filename);
 
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 
-test('diff yaml files', () => {
+test('diff yaml files stylish formatter', () => {
   expect(
     genDiff(
       path.resolve(getFixturePath('file1.yaml')),
       path.resolve(getFixturePath('file2.yaml')),
+      stylish,
     ),
   ).toEqual(`
 {
@@ -65,11 +67,12 @@ test('diff yaml files', () => {
 }`);
 });
 
-test('diff yaml/json files 1', () => {
+test('diff yaml/json files 1 stylish formatter', () => {
   expect(
     genDiff(
       path.resolve(getFixturePath('file1.yaml')),
       path.resolve(getFixturePath('file2.json')),
+      stylish,
     ),
   ).toEqual(`
 {
@@ -120,11 +123,12 @@ test('diff yaml/json files 1', () => {
 }`);
 });
 
-test('diff flat json two equals files', () => {
+test('diff flat json two equals files stylish formatter', () => {
   expect(
     genDiff(
       path.resolve(getFixturePath('file1.json')),
       path.resolve(getFixturePath('file1.json')),
+      stylish,
     ),
   ).toEqual(`
 {
@@ -155,11 +159,12 @@ test('diff flat json two equals files', () => {
 }`);
 });
 
-test('diff jsons without extention', () => {
+test('diff jsons without extention stylish formatter', () => {
   expect(
     genDiff(
       path.resolve(getFixturePath('file1_1')),
       path.resolve(getFixturePath('file2.json')),
+      stylish,
     ),
   ).toEqual(`
 {
@@ -210,11 +215,12 @@ test('diff jsons without extention', () => {
 }`);
 });
 
-test('diff inis', () => {
+test('diff inis stylish formatter', () => {
   expect(
     genDiff(
       path.resolve(getFixturePath('file1.ini')),
       path.resolve(getFixturePath('file2.ini')),
+      stylish,
     ),
   ).toEqual(`
 {
@@ -265,11 +271,12 @@ test('diff inis', () => {
 }`);
 });
 
-test('diff jsons', () => {
+test('diff jsons stylish formatter', () => {
   expect(
     genDiff(
       path.resolve(getFixturePath('file1.json')),
       path.resolve(getFixturePath('file2.json')),
+      stylish,
     ),
   ).toEqual(`
 {
