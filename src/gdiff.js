@@ -7,6 +7,36 @@ export default (filepath1, filepath2) => {
   const f1 = parser(filepath1);
   const f2 = parser(filepath2);
 
+  const getType = (value1, value2) => {
+    if (value1 === undefined) {
+      return 'added';
+    }
+
+    if (value2 === undefined) {
+      return 'deleted';
+    }
+
+    if (value1 !== value2) {
+      return 'modified';
+    }
+
+    return 'same';
+  };
+
+  const getDeletedRootKeys = (file1, file2) => (Object
+    .entries(file1)
+    .filter((entry) => !_.has(file2, entry[0]))
+    .map((entry) => {
+      const [key, value] = entry;
+      return {
+        name: key,
+        type: 'deleted',
+        value: {
+          old: value,
+        },
+      };
+    }));
+
   const iter = (acc, name, curPath2 = [], trails = new Set()) => {
     curPath2.push(name);
     const p = curPath2.join('/');
@@ -22,24 +52,18 @@ export default (filepath1, filepath2) => {
 
     if ((_.isPlainObject(valueFromFile1)) && (_.isPlainObject(valueFromFile2))) {
       const curPath1 = [...curPath2];
-      const children2 = Object
-        .keys(valueFromFile2)
-        .reduce((curAcc, item) => iter(curAcc, item, curPath2, trails), []);
-      const children1 = Object
-        .keys(valueFromFile1)
-        .reduce((curAcc, item) => iter(curAcc, item, curPath1, trails), []);
-      node.children = [...children2, ...children1];
+      node.children = [
+        ...Object
+          .keys(valueFromFile2)
+          .reduce((curAcc, item) => iter(curAcc, item, curPath2, trails), []),
+        ...Object
+          .keys(valueFromFile1)
+          .reduce((curAcc, item) => iter(curAcc, item, curPath1, trails), [])];
       acc.push(node);
       return acc;
     }
 
-    if (valueFromFile1 === undefined) {
-      node.type = 'added';
-    } else if (valueFromFile2 === undefined) {
-      node.type = 'deleted';
-    } else if (valueFromFile1 !== valueFromFile2) {
-      node.type = 'modified';
-    }
+    node.type = getType(valueFromFile1, valueFromFile2);
 
     node.value = {
       old: valueFromFile1,
@@ -51,19 +75,6 @@ export default (filepath1, filepath2) => {
     return acc;
   };
 
-  const accum = Object.entries(f1)
-    .filter((entry) => !_.has(f2, entry[0]))
-    .map((entry) => {
-      const [key, value] = entry;
-      return {
-        name: key,
-        type: 'deleted',
-        value: {
-          old: value,
-        },
-      };
-    });
-
   const inplaceSortByName = (obj) => {
     if (_.has(obj, 'children')) {
       obj.children = _.sortBy(obj.children, (o) => o.name);
@@ -73,7 +84,7 @@ export default (filepath1, filepath2) => {
   };
   const ast = _.sortBy(Object
     .keys(f2)
-    .reduce((acc, key) => iter(acc, key), accum), (o) => o.name);
+    .reduce((acc, key) => iter(acc, key), getDeletedRootKeys(f1, f2)), (o) => o.name);
 
   ast.map(inplaceSortByName);
   return `\n${stylish(ast)}`;
