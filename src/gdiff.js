@@ -1,62 +1,7 @@
 /* eslint-disable no-param-reassign */
 import _ from 'lodash';
 import parser from './parsers.js';
-
-const stylish = (ast) => {
-  const addSymbol = '+';
-  const deleteSymbol = '-';
-  const spaceSymbol = ' ';
-  const emptySymbol = '';
-
-  const makeIndent = (symbol) => (symbol === emptySymbol ? emptySymbol : `${symbol}${spaceSymbol}`);
-  const makeDepthIndent = (symbol, indents, depth) => (
-    symbol === emptySymbol
-      ? `${spaceSymbol.repeat(Math.imul(indents, depth))}`
-      : `${spaceSymbol.repeat(Math.imul(indents, depth) - 2)}`);
-
-  const makeRow = (symbol, name, value, depth, indents) => {
-    const indent = makeIndent(symbol);
-    const depthIndents = makeDepthIndent(symbol, indents, depth);
-    const key = `${depthIndents}${indent}${name}`;
-    if (_.isPlainObject(value)) {
-      return `${key}: {\n${Object.entries(value)
-        .map((entry) => makeRow(emptySymbol, ...entry, depth + 1, indents))
-        .join('')}${spaceSymbol.repeat(depthIndents.length + indent.length)}}\n`;
-    }
-
-    return `${key}: ${value}\n`;
-  };
-
-  const getSymbolType = (type) => {
-    switch (type) {
-      case 'added':
-        return [addSymbol];
-      case 'deleted':
-        return [deleteSymbol];
-      case 'modified':
-        return [deleteSymbol, addSymbol];
-      default:
-        return [emptySymbol];
-    }
-  };
-
-  const getValue = (symbol, value) => (symbol === addSymbol ? value.new : value.old);
-
-  const formatNode = (node, depth, indents = 4) => {
-    const type = _.get(node, 'type');
-    const hasChilds = _.has(node, 'children');
-    const depthIndents = spaceSymbol.repeat(indents * depth);
-    const typeSymbols = getSymbolType(type);
-
-    if (hasChilds) {
-      return `${depthIndents}${node.name}: {\n${node.children.map((n) => formatNode(n, depth + 1, indents)).join('')}${depthIndents}}\n`;
-    }
-
-    return typeSymbols.map((s) => makeRow(s, node.name, getValue(s, node.value), depth, indents)).join('');
-  };
-
-  return `{\n${ast.map((a) => formatNode(a, 1)).join('')}}`;
-};
+import stylish from './stylish.js';
 
 export default (filepath1, filepath2) => {
   const f1 = parser(filepath1);
