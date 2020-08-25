@@ -65,7 +65,8 @@ test('diff yaml files stylish formatter', () => {
             }
         }
     }
-}`);
+}
+`);
 });
 
 test('diff yaml/json files 1 stylish formatter', () => {
@@ -121,7 +122,8 @@ test('diff yaml/json files 1 stylish formatter', () => {
             }
         }
     }
-}`);
+}
+`);
 });
 
 test('diff flat json two equals files stylish formatter', () => {
@@ -157,7 +159,8 @@ test('diff flat json two equals files stylish formatter', () => {
             id: 45
         }
     }
-}`);
+}
+`);
 });
 
 test('diff jsons without extention stylish formatter', () => {
@@ -213,7 +216,8 @@ test('diff jsons without extention stylish formatter', () => {
             }
         }
     }
-}`);
+}
+`);
 });
 
 test('diff inis stylish formatter', () => {
@@ -269,7 +273,8 @@ test('diff inis stylish formatter', () => {
             }
         }
     }
-}`);
+}
+`);
 });
 
 test('diff jsons stylish formatter', () => {
@@ -325,7 +330,8 @@ test('diff jsons stylish formatter', () => {
             }
         }
     }
-}`);
+}
+`);
 });
 
 test('diff json configs with plain formatter', () => {
@@ -346,5 +352,6 @@ Property 'common.setting6.ops' was added with value: 'vops'
 Property 'group1.baz' was updated. From 'bas' to 'bars'
 Property 'group1.nest' was updated. From [complex value] to 'str'
 Property 'group2' was removed
-Property 'group3' was added with value: [complex value]`);
+Property 'group3' was added with value: [complex value]
+`);
 });

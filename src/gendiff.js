@@ -45,21 +45,20 @@ export default (filepath1, filepath2, formatter) => {
   };
 
   const iter = (acc, name, curPath2 = [], trails = new Set()) => {
-    curPath2.push(name);
-    const p = curPath2.join('/');
+    const p = [...curPath2, name].join('/');
     if (trails.has(p)) {
-      curPath2.pop();
       return acc;
     }
     trails.add(p);
     const node = { name };
-    const [valueFromFile1, valueFromFile2] = [_.get(f1, curPath2), _.get(f2, curPath2)];
+    const valueFromFile1 = _.get(f1, [...curPath2, name]);
+    const valueFromFile2 = _.get(f2, [...curPath2, name]);
 
     if ((_.isPlainObject(valueFromFile1)) && (_.isPlainObject(valueFromFile2))) {
-      const curPath1 = [...curPath2];
+      const curPath1 = [...curPath2, name];
       node.children = [...Object
         .keys(valueFromFile2)
-        .reduce((curAcc, item) => iter(curAcc, item, curPath2, trails), []), ...Object
+        .reduce((curAcc, item) => iter(curAcc, item, [...curPath2, name], trails), []), ...Object
         .keys(valueFromFile1)
         .reduce((curAcc, item) => iter(curAcc, item, curPath1, trails), [])];
       acc.push(node);
@@ -67,7 +66,6 @@ export default (filepath1, filepath2, formatter) => {
     }
 
     acc.push(completeNode(node, valueFromFile1, valueFromFile2));
-    curPath2.pop();
     return acc;
   };
 
@@ -83,5 +81,5 @@ export default (filepath1, filepath2, formatter) => {
     .reduce((acc, key) => iter(acc, key), getDeletedRootKeys(f1, f2)), (o) => o.name);
 
   ast.map(inplaceSortByName);
-  return `\n${formatter(ast)}`;
+  return `\n${formatter(ast)}\n`;
 };
