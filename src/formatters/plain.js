@@ -10,7 +10,7 @@ const printValue = (value) => {
   }
 
   return value;
-}
+};
 
 const buildString = (elem) => {
   if (elem.type === 'modified') {
