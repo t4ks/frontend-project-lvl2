@@ -1,8 +1,20 @@
 import _ from 'lodash';
 
+const printValue = (value) => {
+  if (_.isObject(value)) {
+    return '[complex value]';
+  }
+
+  if (_.isString(value)) {
+    return `'${value}'`;
+  }
+
+  return value;
+}
+
 const buildString = (elem) => {
   if (elem.type === 'modified') {
-    return `was updated. From ${elem.value.old} to ${elem.value.new}`;
+    return `was updated. From ${printValue(elem.value.old)} to ${printValue(elem.value.new)}`;
   }
 
   if (elem.type === 'deleted') {
@@ -10,27 +22,22 @@ const buildString = (elem) => {
   }
 
   if (elem.type === 'added') {
-    return `was added with value: '${elem.value.new}'`;
+    return `was added with value: ${printValue(elem.value.new)}`;
   }
 
   return '';
 };
 
+const filterEmptyString = (s) => (s !== '');
+
 const formatNode = (elem, curPath = []) => {
   if (_.has(elem, 'children')) {
-    curPath.push(elem.name);
-    return elem.children.map((el) => formatNode(el, curPath)).join('||||');
+    return elem.children.map((el) => formatNode(el, [...curPath, elem.name])).filter(filterEmptyString).join('\n');
   }
-  curPath.push(elem.name);
+
   const buildedString = buildString(elem);
-  const res = buildedString !== '' ? `Property '${curPath.join('.')}' ${buildedString}` : '';
-  curPath.pop();
-  console.log(`RES=${res}`);
+  const res = buildedString !== '' ? `Property '${[...curPath, elem.name].join('.')}' ${buildedString}` : '';
   return res;
 };
 
-export default (ast) => {
-  const a = ast.map((el) => formatNode(el));
-  console.log('A -> ', a);
-  console.log('FILTERED -> ', a.filter((s) => s !== '' || s !== '\n'));
-};
+export default (ast) => ast.map((el) => formatNode(el)).filter(filterEmptyString).join('\n');
