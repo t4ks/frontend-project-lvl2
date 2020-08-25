@@ -1,9 +1,8 @@
 /* eslint-disable no-undef */
 import { fileURLToPath } from 'url';
 import path from 'path';
-import genDiff from '../gendiff';
-import stylish from '../src/formatters/stylish';
-import plain from '../src/formatters/plain';
+import genDiff from '../src/gendiff';
+import getFormatter from '../src/formatters/index.js';
 
 /* eslint-disable no-underscore-dangle */
 const __filename = fileURLToPath(import.meta.url);
@@ -17,7 +16,7 @@ test('diff yaml files stylish formatter', () => {
     genDiff(
       path.resolve(getFixturePath('file1.yaml')),
       path.resolve(getFixturePath('file2.yaml')),
-      stylish,
+      getFormatter('stylish'),
     ),
   ).toEqual(`
 {
@@ -74,7 +73,7 @@ test('diff yaml/json files 1 stylish formatter', () => {
     genDiff(
       path.resolve(getFixturePath('file1.yaml')),
       path.resolve(getFixturePath('file2.json')),
-      stylish,
+      getFormatter('stylish'),
     ),
   ).toEqual(`
 {
@@ -131,7 +130,7 @@ test('diff flat json two equals files stylish formatter', () => {
     genDiff(
       path.resolve(getFixturePath('file1.json')),
       path.resolve(getFixturePath('file1.json')),
-      stylish,
+      getFormatter('stylish'),
     ),
   ).toEqual(`
 {
@@ -168,7 +167,7 @@ test('diff jsons without extention stylish formatter', () => {
     genDiff(
       path.resolve(getFixturePath('file1_1')),
       path.resolve(getFixturePath('file2.json')),
-      stylish,
+      getFormatter('stylish'),
     ),
   ).toEqual(`
 {
@@ -225,7 +224,7 @@ test('diff inis stylish formatter', () => {
     genDiff(
       path.resolve(getFixturePath('file1.ini')),
       path.resolve(getFixturePath('file2.ini')),
-      stylish,
+      getFormatter('stylish'),
     ),
   ).toEqual(`
 {
@@ -282,7 +281,7 @@ test('diff jsons stylish formatter', () => {
     genDiff(
       path.resolve(getFixturePath('file1.json')),
       path.resolve(getFixturePath('file2.json')),
-      stylish,
+      getFormatter('stylish'),
     ),
   ).toEqual(`
 {
@@ -339,7 +338,7 @@ test('diff json configs with plain formatter', () => {
     genDiff(
       path.resolve(getFixturePath('file1.json')),
       path.resolve(getFixturePath('file2.json')),
-      plain,
+      getFormatter('plain'),
     ),
   ).toEqual(`
 Property 'common.follow' was added with value: false

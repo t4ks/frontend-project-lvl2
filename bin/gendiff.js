@@ -3,13 +3,10 @@
 import pkg from 'commander';
 import path from 'path';
 import packageConfig from '../package.json';
-import genDiff from '../gendiff.js';
-import stylish from '../src/formatters/stylish.js';
-import plain from '../src/formatters/plain.js';
+import genDiff from '../src/gendiff.js';
+import getFormatter from '../src/formatters/index.js';
 
 const { program } = pkg;
-
-const SUPPORTED_FORMATTERS = { stylish, plain };
 
 program.version(packageConfig.version)
   .description(packageConfig.description)
@@ -19,7 +16,7 @@ program.version(packageConfig.version)
     const currentDir = process.cwd();
     const diff = genDiff(path.resolve(currentDir, filepath1),
       path.resolve(currentDir, filepath2),
-      SUPPORTED_FORMATTERS[cmdObj.format]);
+      getFormatter(cmdObj.format));
     console.log(`${diff}`);
   });
 
