@@ -2,7 +2,8 @@
 import { fileURLToPath } from 'url';
 import path from 'path';
 import genDiff from '../gendiff';
-import stylish from '../src/stylish';
+import stylish from '../src/formatters/stylish';
+import plain from '../src/formatters/plain';
 
 /* eslint-disable no-underscore-dangle */
 const __filename = fileURLToPath(import.meta.url);
@@ -325,4 +326,26 @@ test('diff jsons stylish formatter', () => {
         }
     }
 }`);
+});
+
+test('diff json configs with plain formatter', () => {
+  expect(
+    genDiff(
+      path.resolve(getFixturePath('file1.json')),
+      path.resolve(getFixturePath('file2.json')),
+      plain,
+    ),
+  ).toEqual(`
+Property 'common.follow' was added with value: false
+Property 'common.setting2' was removed
+Property 'common.setting3' was updated. From true to [complex value]
+Property 'common.setting4' was added with value: 'blah blah'
+Property 'common.setting5' was added with value: [complex value]
+Property 'common.setting6.doge.wow' was updated. From 'too much' to 'so much'
+Property 'common.setting6.ops' was added with value: 'vops'
+Property 'group1.baz' was updated. From 'bas' to 'bars'
+Property 'group1.nest' was updated. From [complex value] to 'str'
+Property 'group2' was removed
+Property 'group3' was added with value: [complex value]
+`);
 });
