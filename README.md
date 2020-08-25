@@ -28,3 +28,6 @@ Different formats can be compared between themselves.
 ## Stylish
 
 [![asciicast](https://asciinema.org/a/355084.svg)](https://asciinema.org/a/355084)
+
+## Plain
+[![asciicast](https://asciinema.org/a/355598.svg)](https://asciinema.org/a/355598)
