@@ -45,20 +45,20 @@ export default (filepath1, filepath2, formatter) => {
   };
 
   const iter = (acc, name, curPath2 = [], trails = new Set()) => {
-    const p = [...curPath2, name].join('/');
-    if (trails.has(p)) {
+    const fullPath = [...curPath2, name];
+    if (trails.has(fullPath.join('/'))) {
       return acc;
     }
-    trails.add(p);
+    trails.add(fullPath.join('/'));
     const node = { name };
-    const valueFromFile1 = _.get(f1, [...curPath2, name]);
-    const valueFromFile2 = _.get(f2, [...curPath2, name]);
+    const valueFromFile1 = _.get(f1, fullPath);
+    const valueFromFile2 = _.get(f2, fullPath);
 
     if ((_.isPlainObject(valueFromFile1)) && (_.isPlainObject(valueFromFile2))) {
-      const curPath1 = [...curPath2, name];
+      const curPath1 = [...fullPath];
       node.children = [...Object
         .keys(valueFromFile2)
-        .reduce((curAcc, item) => iter(curAcc, item, [...curPath2, name], trails), []), ...Object
+        .reduce((curAcc, item) => iter(curAcc, item, [...fullPath], trails), []), ...Object
         .keys(valueFromFile1)
         .reduce((curAcc, item) => iter(curAcc, item, curPath1, trails), [])];
       acc.push(node);
