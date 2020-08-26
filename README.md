@@ -31,3 +31,6 @@ Different formats can be compared between themselves.
 
 ## Plain
 [![asciicast](https://asciinema.org/a/355598.svg)](https://asciinema.org/a/355598)
+
+## JSON
+[![asciicast](https://asciinema.org/a/356109.svg)](https://asciinema.org/a/356109)
