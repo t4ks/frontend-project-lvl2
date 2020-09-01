@@ -1,10 +1,12 @@
 /* eslint-disable no-param-reassign */
 import _ from 'lodash';
 import parser from './parsers.js';
+import getFormatter from './formatters/index.js';
 
-export default (filepath1, filepath2, formatter) => {
+export default (filepath1, filepath2, format = 'stylish') => {
   const f1 = parser(filepath1);
   const f2 = parser(filepath2);
+  const formatter = getFormatter(format);
 
   const getType = (value1, value2) => {
     if (value1 === undefined) {
@@ -81,5 +83,6 @@ export default (filepath1, filepath2, formatter) => {
     .reduce((acc, key) => iter(acc, key), getDeletedRootKeys(f1, f2)), (o) => o.name);
 
   ast.map(inplaceSortByName);
+
   return `\n${formatter(ast)}\n`;
 };
