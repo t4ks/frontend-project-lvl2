@@ -8,55 +8,47 @@ export default (config1, config2, format = 'stylish') => {
   const configNew = parse(config2);
   const formatter = getFormatter(format);
 
+  const makeNode = (name, {
+    type = null, oldValue = null, newValue = null, children = [],
+  } = {}) => {
+    if (type === null) {
+      return { name, children };
+    }
+
+    if (type === 'deleted') {
+      return { name, type, value: { old: oldValue } };
+    }
+
+    if (type === 'modified') {
+      return { name, type, value: { old: oldValue, new: newValue } };
+    }
+
+    if (type === 'added') {
+      return { name, type, value: { new: newValue } };
+    }
+
+    return { name, type, value: { old: oldValue, new: newValue } };
+  };
+
   const compare = (configBefore, configAfter, result = []) => {
     Object.entries(configBefore).forEach((entry) => {
       const [key, oldValue] = entry;
       const beforeValIsObject = _.isPlainObject(oldValue);
       const afterValIsObject = _.isPlainObject(configAfter[key]);
       const keyWasDeleted = !_.has(configAfter, key);
+      const newValue = configAfter[key];
 
       if (!keyWasDeleted && beforeValIsObject && afterValIsObject) {
-        const node = {
-          name: key,
-          children: [],
-        };
-        result.push(node);
-        return compare(oldValue, configAfter[key], _.last(result).children);
+        result.push(makeNode(key));
+        return compare(oldValue, newValue, _.last(result).children);
       }
+
       if (keyWasDeleted) {
-        return result.push(
-          {
-            name: key,
-            type: 'deleted',
-            value: {
-              old: oldValue,
-            },
-          },
-        );
-      }
-      if (oldValue !== configAfter[key]) {
-        return result.push(
-          {
-            name: key,
-            type: 'modified',
-            value: {
-              old: oldValue,
-              new: configAfter[key],
-            },
-          },
-        );
-      }
-      if (oldValue === configAfter[key]) {
-        return result.push(
-          {
-            name: key,
-            type: 'same',
-            value: {
-              old: oldValue,
-              new: configAfter[key],
-            },
-          },
-        );
+        result.push(makeNode(key, { type: 'deleted', oldValue }));
+      } else if (oldValue !== newValue) {
+        result.push(makeNode(key, { type: 'modified', oldValue, newValue }));
+      } else if (oldValue === configAfter[key]) {
+        result.push(makeNode(key, { type: 'same', oldValue, newValue }));
       }
 
       return result;
@@ -66,16 +58,8 @@ export default (config1, config2, format = 'stylish') => {
       const [key] = entry;
       return !_.has(configBefore, key);
     }).forEach((entry) => {
-      const [key, value] = entry;
-      return result.push(
-        {
-          name: key,
-          type: 'added',
-          value: {
-            new: value,
-          },
-        },
-      );
+      const [key, newValue] = entry;
+      return result.push(makeNode(key, { type: 'added', newValue }));
     });
 
     return result;
