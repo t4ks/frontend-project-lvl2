@@ -2,7 +2,7 @@
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import path from 'path';
-import genDiff from '../src/gendiff';
+import genDiff from '../src/index.js';
 
 /* eslint-disable no-underscore-dangle */
 const __filename = fileURLToPath(import.meta.url);
