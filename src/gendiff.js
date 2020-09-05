@@ -33,17 +33,14 @@ export default (config1, config2, format = 'stylish') => {
   const compare = (configBefore, configAfter, result = []) => {
     Object.entries(configBefore).forEach((entry) => {
       const [key, oldValue] = entry;
-      const beforeValIsObject = _.isPlainObject(oldValue);
-      const afterValIsObject = _.isPlainObject(configAfter[key]);
-      const keyWasDeleted = !_.has(configAfter, key);
       const newValue = configAfter[key];
 
-      if (!keyWasDeleted && beforeValIsObject && afterValIsObject) {
+      if (newValue !== undefined && _.isPlainObject(oldValue) && _.isPlainObject(newValue)) {
         result.push(makeNode(key));
         return compare(oldValue, newValue, _.last(result).children);
       }
 
-      if (keyWasDeleted) {
+      if (newValue === undefined) {
         result.push(makeNode(key, { type: 'deleted', oldValue }));
       } else if (oldValue !== newValue) {
         result.push(makeNode(key, { type: 'modified', oldValue, newValue }));
