@@ -15,8 +15,8 @@ const readFixtureFile = (filename) => fs.readFileSync(getFixturePath(filename), 
 test('diff yaml files stylish formatter', () => {
   expect(
     genDiff(
-      path.resolve(getFixturePath('file1.yaml')),
-      path.resolve(getFixturePath('file2.yaml')),
+      getFixturePath('file1.yaml'),
+      getFixturePath('file2.yaml'),
     ),
   ).toEqual(readFixtureFile('result.stylish'));
 });
@@ -24,8 +24,8 @@ test('diff yaml files stylish formatter', () => {
 test('diff yaml/json files 1 stylish formatter', () => {
   expect(
     genDiff(
-      path.resolve(getFixturePath('file1.yaml')),
-      path.resolve(getFixturePath('file2.json')),
+      getFixturePath('file1.yaml'),
+      getFixturePath('file2.json'),
     ),
   ).toEqual(readFixtureFile('result.stylish'));
 });
@@ -33,8 +33,8 @@ test('diff yaml/json files 1 stylish formatter', () => {
 test('diff flat json two equals files stylish formatter', () => {
   expect(
     genDiff(
-      path.resolve(getFixturePath('file1.json')),
-      path.resolve(getFixturePath('file1.json')),
+      getFixturePath('file1.json'),
+      getFixturePath('file1.json'),
     ),
   ).toEqual(readFixtureFile('result_for_equal_files.stylish'));
 });
@@ -42,8 +42,8 @@ test('diff flat json two equals files stylish formatter', () => {
 test('diff jsons without extention stylish formatter', () => {
   expect(
     genDiff(
-      path.resolve(getFixturePath('file1_1')),
-      path.resolve(getFixturePath('file2.json')),
+      getFixturePath('file1_1'),
+      getFixturePath('file2.json'),
     ),
   ).toEqual(readFixtureFile('result.stylish'));
 });
@@ -51,8 +51,8 @@ test('diff jsons without extention stylish formatter', () => {
 test('diff inis stylish formatter', () => {
   expect(
     genDiff(
-      path.resolve(getFixturePath('file1.ini')),
-      path.resolve(getFixturePath('file2.ini')),
+      getFixturePath('file1.ini'),
+      getFixturePath('file2.ini'),
     ),
   ).toEqual(readFixtureFile('result.stylish'));
 });
@@ -60,8 +60,8 @@ test('diff inis stylish formatter', () => {
 test('diff jsons stylish formatter', () => {
   expect(
     genDiff(
-      path.resolve(getFixturePath('file1.json')),
-      path.resolve(getFixturePath('file2.json')),
+      getFixturePath('file1.json'),
+      getFixturePath('file2.json'),
     ),
   ).toEqual(readFixtureFile('result.stylish'));
 });
@@ -69,8 +69,8 @@ test('diff jsons stylish formatter', () => {
 test('diff json configs with plain formatter', () => {
   expect(
     genDiff(
-      path.resolve(getFixturePath('file1.json')),
-      path.resolve(getFixturePath('file2.json')),
+      getFixturePath('file1.json'),
+      getFixturePath('file2.json'),
       'plain',
     ),
   ).toEqual(readFixtureFile('result.plain'));
@@ -79,8 +79,8 @@ test('diff json configs with plain formatter', () => {
 test('diff json configs with json formatter', () => {
   expect(
     genDiff(
-      path.resolve(getFixturePath('file1.json')),
-      path.resolve(getFixturePath('file2.json')),
+      getFixturePath('file1.json'),
+      getFixturePath('file2.json'),
       'json',
     ),
   ).toEqual(readFixtureFile('result.json'));
