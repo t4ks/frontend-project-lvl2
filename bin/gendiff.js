@@ -3,7 +3,7 @@
 import pkg from 'commander';
 import path from 'path';
 import packageConfig from '../package.json';
-import genDiff from '../src/index.js';
+import genDiff from '../index.js';
 
 const { program } = pkg;
 
