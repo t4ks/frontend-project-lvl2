@@ -10,25 +10,13 @@ export default (config1, config2, format = 'stylish') => {
 
   const makeNode = (name, {
     type = null, oldValue = null, newValue = null, children = [],
-  } = {}) => {
-    if (type === null) {
-      return { name, children };
-    }
-
-    if (type === 'deleted') {
-      return { name, type, value: { old: oldValue } };
-    }
-
-    if (type === 'modified') {
-      return { name, type, value: { old: oldValue, new: newValue } };
-    }
-
-    if (type === 'added') {
-      return { name, type, value: { new: newValue } };
-    }
-
-    return { name, type, value: { old: oldValue, new: newValue } };
-  };
+  } = {}) => ({
+    [null]: { name, children },
+    deleted: { name, type, value: { old: oldValue } },
+    modified: { name, type, value: { old: oldValue, new: newValue } },
+    added: { name, type, value: { new: newValue } },
+    same: { name, type, value: { old: oldValue, new: newValue } },
+  }[type]);
 
   const compare = (configBefore, configAfter, result = []) => {
     Object.entries(configBefore).forEach((entry) => {
