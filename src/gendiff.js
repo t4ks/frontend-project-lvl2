@@ -16,49 +16,18 @@ export default (config1, config2, format = 'stylish') => {
       const oldValue = configBefore[key];
 
       if (newValue !== undefined && _.isPlainObject(oldValue) && _.isPlainObject(newValue)) {
-        return {
-          name: key,
-          children: compare(oldValue, newValue),
-        };
+        return { name: key, children: compare(oldValue, newValue) };
       }
-
       if (newValue === undefined) {
-        return {
-          name: key,
-          type: 'deleted',
-          value: {
-            old: oldValue,
-          },
-        };
+        return { name: key, type: 'deleted', value: { old: oldValue } };
       }
       if (oldValue === undefined) {
-        return {
-          name: key,
-          type: 'added',
-          value: {
-            new: newValue,
-          },
-        };
+        return { name: key, type: 'added', value: { new: newValue } };
       }
       if (oldValue !== newValue) {
-        return {
-          name: key,
-          type: 'modified',
-          value: {
-            old: oldValue,
-            new: newValue,
-          },
-        };
+        return { name: key, type: 'modified', value: { old: oldValue, new: newValue } };
       }
-
-      return {
-        name: key,
-        type: 'same',
-        value: {
-          old: oldValue,
-          new: newValue,
-        },
-      };
+      return { name: key, type: 'same', value: { old: oldValue, new: newValue } };
     });
   };
 
