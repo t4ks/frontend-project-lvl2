@@ -1,7 +1,5 @@
-import path from 'path';
 import yaml from 'js-yaml';
 import ini from 'ini';
-import fs from 'fs';
 
 const jsonParser = (data) => JSON.parse(data);
 const yamlParser = (data) => yaml.load(data);
@@ -13,8 +11,7 @@ const getParser = (ext) => ({
   '.ini': iniParser,
 }[ext]);
 
-export default (filepath) => {
-  const ext = path.extname(filepath);
+export default (config, ext) => {
   const parser = getParser(ext);
-  return parser(fs.readFileSync(filepath, 'utf-8'));
+  return parser(config);
 };

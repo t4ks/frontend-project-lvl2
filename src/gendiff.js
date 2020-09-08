@@ -1,11 +1,15 @@
 /* eslint-disable no-param-reassign */
 import _ from 'lodash';
+import fs from 'fs';
+import path from 'path';
 import parse from './parsers.js';
 import getFormatter from './formatters/index.js';
 
-export default (config1, config2, format = 'stylish') => {
-  const configOld = parse(config1);
-  const configNew = parse(config2);
+export default (configPath1, configPath2, format = 'stylish') => {
+  const ext1 = path.extname(configPath1);
+  const ext2 = path.extname(configPath2);
+  const configOld = parse(fs.readFileSync(configPath1, 'utf-8'), ext1);
+  const configNew = parse(fs.readFileSync(configPath2, 'utf-8'), ext2);
   const formatter = getFormatter(format);
 
   const compare = (configBefore, configAfter) => {
