@@ -18,7 +18,7 @@ program.version(packageConfig.version)
       path.resolve(currentDir, filepath2),
       cmdObj.format,
     );
-    console.log(`${diff}`);
+    console.log(diff);
   });
 
 program.parse(process.argv);
