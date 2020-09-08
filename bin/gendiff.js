@@ -14,8 +14,8 @@ program.version(packageConfig.version)
   .action((filepath1, filepath2, cmdObj) => {
     const currentDir = process.cwd();
     const diff = genDiff(
-      path.resolve(currentDir, filepath1),
-      path.resolve(currentDir, filepath2),
+      path.join(currentDir, filepath1),
+      path.join(currentDir, filepath2),
       cmdObj.format,
     );
     console.log(diff);
