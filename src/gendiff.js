@@ -19,14 +19,14 @@ export default (configPath1, configPath2, format = 'stylish') => {
       const newValue = configAfter[key];
       const oldValue = configBefore[key];
 
-      if (newValue !== undefined && _.isPlainObject(oldValue) && _.isPlainObject(newValue)) {
-        return { name: key, children: compare(oldValue, newValue) };
-      }
-      if (newValue === undefined) {
+      if (!_.has(configAfter, key)) {
         return { name: key, type: 'deleted', value: { old: oldValue } };
       }
-      if (oldValue === undefined) {
+      if (!_.has(configBefore, key)) {
         return { name: key, type: 'added', value: { new: newValue } };
+      }
+      if (_.isPlainObject(oldValue) && _.isPlainObject(newValue)) {
+        return { name: key, type: 'nested', children: compare(oldValue, newValue) };
       }
       if (oldValue !== newValue) {
         return { name: key, type: 'modified', value: { old: oldValue, new: newValue } };
