@@ -43,11 +43,10 @@ const getValue = (symbol, value) => (symbol === ADDED_SYMBOL ? value.new : value
 export default (ast) => {
   const formatNode = (node, depth, indents = 4) => {
     const type = _.get(node, 'type');
-    const hasChilds = _.has(node, 'children');
     const depthIndents = SPACE_SYMBOL.repeat(indents * depth);
     const typeSymbols = getSymbolType(type);
 
-    if (hasChilds) {
+    if (type === 'nested') {
       return `${depthIndents}${node.name}: {\n${node.children.map((n) => formatNode(n, depth + 1, indents)).join('')}${depthIndents}}\n`;
     }
 
