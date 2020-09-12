@@ -36,5 +36,5 @@ export default (configPath1, configPath2, format = 'stylish') => {
   };
 
   const ast = compare(configOld, configNew);
-  return `\n${formatter(ast)}\n`;
+  return `${formatter(ast)}`;
 };
