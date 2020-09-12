@@ -15,31 +15,63 @@ const readFixtureFile = (filename) => fs.readFileSync(getFixturePath(filename), 
 test.each(
   [
     // json files
-    ['file1.json', 'file2.json', 'stylish', 'result.stylish'],
-    ['file1.json', 'file2.json', 'plain', 'result.plain'],
-    ['file1.json', 'file2.json', 'json', 'result.json'],
-    ['file1.json', 'file1.json', 'stylish', 'result_for_equal_files.stylish'],
+    ['json', 'stylish'],
+    ['json', 'plain'],
+    ['json', 'json'],
 
     // yaml files
-    ['file1.yaml', 'file2.yaml', 'stylish', 'result.stylish'],
-    ['file1.yaml', 'file2.yaml', 'plain', 'result.plain'],
-    ['file1.yaml', 'file2.yaml', 'json', 'result.json'],
+    ['yaml', 'stylish'],
+    ['yaml', 'plain'],
+    ['yaml', 'json'],
 
     // ini files
-    ['file1.ini', 'file2.ini', 'plain', 'result.plain'],
-    ['file1.ini', 'file2.ini', 'stylish', 'result.stylish'],
-
-    // crossed formats
-    ['file1.yaml', 'file2.json', 'stylish', 'result.stylish'],
-    ['file1.ini', 'file2.json', 'stylish', 'result.stylish'],
-    ['file1.yaml', 'file2.ini', 'stylish', 'result.stylish'],
+    ['ini', 'plain'],
+    ['ini', 'stylish'],
   ],
-)('diff file: %s and file: %s using formatter: %s', (file1, file2, formatter, expected) => {
+)('diff %s configs using formatter: %s', (ext, formatter) => {
   expect(
     genDiff(
-      getFixturePath(file1),
-      getFixturePath(file2),
+      getFixturePath(`file1.${ext}`),
+      getFixturePath(`file2.${ext}`),
       formatter,
     ),
-  ).toEqual(readFixtureFile(expected));
+  ).toEqual(readFixtureFile(`result.${formatter}`));
+});
+
+test.each(
+  [
+    ['yaml', 'json', 'stylish'],
+    ['ini', 'json', 'stylish'],
+    ['yaml', 'ini', 'stylish'],
+    ['yaml', 'json', 'plain'],
+    ['ini', 'json', 'plain'],
+    ['yaml', 'ini', 'plain'],
+    ['yaml', 'json', 'json'],
+  ],
+)('diff config: %s with config: %s using formatter: %s', (ext1, ext2, formatter) => {
+  expect(
+    genDiff(
+      getFixturePath(`file1.${ext1}`),
+      getFixturePath(`file2.${ext2}`),
+      formatter,
+    ),
+  ).toEqual(readFixtureFile(`result.${formatter}`));
+});
+
+test.each(
+  [
+    ['json', 'stylish'],
+    ['yaml', 'stylish'],
+    ['ini', 'stylish'],
+    ['json', 'json'],
+    ['yaml', 'json'],
+  ],
+)('check the unchanged %s configs using formatter: %s', (ext, formatter) => {
+  expect(
+    genDiff(
+      getFixturePath(`file1.${ext}`),
+      getFixturePath(`file1.${ext}`),
+      formatter,
+    ),
+  ).toEqual(readFixtureFile(`result_for_equal_files.${formatter}`));
 });
