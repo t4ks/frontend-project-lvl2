@@ -20,18 +20,22 @@ export default (configPath1, configPath2, format = 'stylish') => {
       const oldValue = configBefore[key];
 
       if (!_.has(configAfter, key)) {
-        return { name: key, type: 'deleted', value: { old: oldValue } };
+        return { name: key, type: 'deleted', oldValue };
       }
       if (!_.has(configBefore, key)) {
-        return { name: key, type: 'added', value: { new: newValue } };
+        return { name: key, type: 'added', newValue };
       }
       if (_.isPlainObject(oldValue) && _.isPlainObject(newValue)) {
         return { name: key, type: 'nested', children: compare(oldValue, newValue) };
       }
       if (oldValue !== newValue) {
-        return { name: key, type: 'modified', value: { old: oldValue, new: newValue } };
+        return {
+          name: key, type: 'modified', oldValue, newValue,
+        };
       }
-      return { name: key, type: 'same', value: { old: oldValue, new: newValue } };
+      return {
+        name: key, type: 'same', oldValue, newValue,
+      };
     });
   };
 

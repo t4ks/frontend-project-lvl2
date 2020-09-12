@@ -38,19 +38,18 @@ const getSymbolType = (type) => {
   }
 };
 
-const getValue = (symbol, value) => (symbol === ADDED_SYMBOL ? value.new : value.old);
+const getValue = (symbol, node) => (symbol === ADDED_SYMBOL ? node.newValue : node.oldValue);
 
 export default (ast) => {
   const formatNode = (node, depth, indents = 4) => {
-    const type = _.get(node, 'type');
     const depthIndents = SPACE_SYMBOL.repeat(indents * depth);
-    const typeSymbols = getSymbolType(type);
+    const typeSymbols = getSymbolType(node.type);
 
-    if (type === 'nested') {
+    if (node.type === 'nested') {
       return `${depthIndents}${node.name}: {\n${node.children.map((n) => formatNode(n, depth + 1, indents)).join('')}${depthIndents}}\n`;
     }
 
-    return typeSymbols.map((s) => makeRow(s, node.name, getValue(s, node.value), depth, indents)).join('');
+    return typeSymbols.map((s) => makeRow(s, node.name, getValue(s, node), depth, indents)).join('');
   };
 
   return `{\n${ast.map((a) => formatNode(a, 1)).join('')}}`;

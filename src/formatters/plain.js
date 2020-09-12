@@ -14,7 +14,7 @@ const printValue = (value) => {
 
 const buildString = (elem) => {
   if (elem.type === 'modified') {
-    return `was updated. From ${printValue(elem.value.old)} to ${printValue(elem.value.new)}`;
+    return `was updated. From ${printValue(elem.oldValue)} to ${printValue(elem.newValue)}`;
   }
 
   if (elem.type === 'deleted') {
@@ -22,7 +22,7 @@ const buildString = (elem) => {
   }
 
   if (elem.type === 'added') {
-    return `was added with value: ${printValue(elem.value.new)}`;
+    return `was added with value: ${printValue(elem.newValue)}`;
   }
 
   return '';
@@ -31,7 +31,7 @@ const buildString = (elem) => {
 const filterEmptyString = (s) => (s !== '');
 
 const formatNode = (elem, curPath = []) => {
-  if (_.has(elem, 'children')) {
+  if (elem.type === 'nested') {
     return elem.children.map((el) => formatNode(el, [...curPath, elem.name])).filter(filterEmptyString).join('\n');
   }
 
