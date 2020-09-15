@@ -1,13 +1,13 @@
 import yaml from 'js-yaml';
 import ini from 'ini';
 
-const SUPPORTED_PARSERS = {
-  '.json': (data) => JSON.parse(data),
-  '.yaml': (data) => yaml.load(data),
-  '.ini': (data) => ini.parse(data),
+const supportedParsers = {
+  '.json': JSON.parse,
+  '.yaml': yaml.load,
+  '.ini': ini.parse,
 };
 
 export default (data, ext) => {
-  const parse = SUPPORTED_PARSERS[ext];
+  const parse = supportedParsers[ext];
   return parse(data);
 };

@@ -12,22 +12,6 @@ const printValue = (value) => {
   return value;
 };
 
-const buildString = (elem) => {
-  if (elem.type === 'modified') {
-    return `was updated. From ${printValue(elem.oldValue)} to ${printValue(elem.newValue)}`;
-  }
-
-  if (elem.type === 'deleted') {
-    return 'was removed';
-  }
-
-  if (elem.type === 'added') {
-    return `was added with value: ${printValue(elem.newValue)}`;
-  }
-
-  return '';
-};
-
 const filterEmptyString = (s) => (s !== '');
 
 const formatNode = (elem, curPath = []) => {
@@ -35,9 +19,19 @@ const formatNode = (elem, curPath = []) => {
     return elem.children.map((el) => formatNode(el, [...curPath, elem.name])).filter(filterEmptyString).join('\n');
   }
 
-  const buildedString = buildString(elem);
-  const res = buildedString !== '' ? `Property '${[...curPath, elem.name].join('.')}' ${buildedString}` : '';
-  return res;
+  if (elem.type === 'modified') {
+    return `Property '${[...curPath, elem.name].join('.')}' was updated. From ${printValue(elem.oldValue)} to ${printValue(elem.newValue)}`;
+  }
+
+  if (elem.type === 'deleted') {
+    return `Property '${[...curPath, elem.name].join('.')}' was removed`;
+  }
+
+  if (elem.type === 'added') {
+    return `Property '${[...curPath, elem.name].join('.')}' was added with value: ${printValue(elem.newValue)}`;
+  }
+
+  return '';
 };
 
 export default (ast) => ast.map((el) => formatNode(el)).filter(filterEmptyString).join('\n');
