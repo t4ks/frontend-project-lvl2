@@ -1,56 +1,47 @@
 import _ from 'lodash';
 
-const ADDED_SYMBOL = '+';
-const DELETED_SYMBOL = '-';
-const SPACE_SYMBOL = ' ';
-const EMPTY_SYMBOL = '';
+const addSymbol = '+';
+const deleteSymbol = '-';
+const spaceSymbol = ' ';
+const emptySymbol = '';
 
-const makeIndent = (symbol) => (symbol === EMPTY_SYMBOL ? EMPTY_SYMBOL : `${symbol}${SPACE_SYMBOL}`);
+const makeIndent = (symbol) => (symbol === emptySymbol ? emptySymbol : `${symbol}${spaceSymbol}`);
 
-const makeDepthIndent = (symbol, indents, depth) => (
-  symbol === EMPTY_SYMBOL
-    ? `${SPACE_SYMBOL.repeat(Math.imul(indents, depth))}`
-    : `${SPACE_SYMBOL.repeat(Math.imul(indents, depth) - 2)}`);
+const makeDepthIndent = (symbol, depth, indents) => (
+  symbol === emptySymbol
+    ? `${spaceSymbol.repeat(Math.imul(indents, depth))}`
+    : `${spaceSymbol.repeat(Math.imul(indents, depth) - 2)}`);
 
 const makeRow = (symbol, name, value, depth, indents) => {
   const indent = makeIndent(symbol);
-  const depthIndents = makeDepthIndent(symbol, indents, depth);
+  const depthIndents = makeDepthIndent(symbol, depth, indents);
   const key = `${depthIndents}${indent}${name}`;
   if (_.isPlainObject(value)) {
     return `${key}: {\n${Object.entries(value)
-      .map((entry) => makeRow(EMPTY_SYMBOL, ...entry, depth + 1, indents))
-      .join('')}${SPACE_SYMBOL.repeat(depthIndents.length + indent.length)}}\n`;
+      .map((entry) => makeRow(emptySymbol, ...entry, depth + 1, indents))
+      .join('')}${spaceSymbol.repeat(depthIndents.length + indent.length)}}\n`;
   }
 
   return `${key}: ${value}\n`;
 };
 
-const getSymbolType = (type) => {
-  switch (type) {
+const formatNode = (node, depth = 1, indents = 4) => {
+  const depthIndents = spaceSymbol.repeat(indents * depth);
+  switch (node.type) {
+    case 'nested':
+      return `${depthIndents}${node.name}: {\n${node.children.map((n) => formatNode(n, depth + 1, indents)).join('')}${depthIndents}}\n`;
     case 'added':
-      return [ADDED_SYMBOL];
+      return makeRow(addSymbol, node.name, node.newValue, depth, indents);
     case 'deleted':
-      return [DELETED_SYMBOL];
+      return makeRow(deleteSymbol, node.name, node.oldValue, depth, indents);
     case 'modified':
-      return [DELETED_SYMBOL, ADDED_SYMBOL];
+      return [
+        makeRow(deleteSymbol, node.name, node.oldValue, depth, indents),
+        makeRow(addSymbol, node.name, node.newValue, depth, indents),
+      ].join('');
     default:
-      return [EMPTY_SYMBOL];
+      return makeRow(emptySymbol, node.name, node.oldValue, depth, indents);
   }
 };
 
-const getValue = (symbol, node) => (symbol === ADDED_SYMBOL ? node.newValue : node.oldValue);
-
-export default (ast) => {
-  const formatNode = (node, depth, indents = 4) => {
-    const depthIndents = SPACE_SYMBOL.repeat(indents * depth);
-    const typeSymbols = getSymbolType(node.type);
-
-    if (node.type === 'nested') {
-      return `${depthIndents}${node.name}: {\n${node.children.map((n) => formatNode(n, depth + 1, indents)).join('')}${depthIndents}}\n`;
-    }
-
-    return typeSymbols.map((s) => makeRow(s, node.name, getValue(s, node), depth, indents)).join('');
-  };
-
-  return `{\n${ast.map((a) => formatNode(a, 1)).join('')}}`;
-};
+export default (ast) => `{\n${ast.map((a) => formatNode(a)).join('')}}`;
