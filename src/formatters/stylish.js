@@ -7,42 +7,40 @@ const emptySymbol = '';
 const indents = 4;
 
 const makeIndent = (symbol) => (symbol === emptySymbol ? emptySymbol : `${symbol}${spaceSymbol}`);
-
-const makeDepthIndent = (symbol, depth) => (
-  symbol === emptySymbol
-    ? `${spaceSymbol.repeat(Math.imul(indents, depth))}`
-    : `${spaceSymbol.repeat(Math.imul(indents, depth) - 2)}`);
+const makeDepthIndent = (depth) => spaceSymbol.repeat(indents * depth);
 
 const makeRow = (symbol, name, value, depth) => {
   const indent = makeIndent(symbol);
-  const depthIndents = makeDepthIndent(symbol, depth);
-  const key = `${depthIndents}${indent}${name}`;
+  const spaces = symbol === emptySymbol ? makeDepthIndent(depth) : makeDepthIndent(depth - 0.5);
+  const key = `${spaces}${indent}${name}`;
   if (_.isPlainObject(value)) {
     return `${key}: {\n${Object.entries(value)
       .map((entry) => makeRow(emptySymbol, ...entry, depth + 1))
-      .join('')}${spaceSymbol.repeat(depthIndents.length + indent.length)}}\n`;
+      .join('')}${spaceSymbol.repeat(spaces.length + indent.length)}}\n`;
   }
 
   return `${key}: ${value}\n`;
 };
 
-const formatNode = (node, depth = 1) => {
-  const depthIndents = spaceSymbol.repeat(indents * depth);
-  switch (node.type) {
-    case 'nested':
-      return `${depthIndents}${node.name}: {\n${node.children.map((n) => formatNode(n, depth + 1)).join('')}${depthIndents}}\n`;
-    case 'added':
-      return makeRow(addSymbol, node.name, node.newValue, depth, indents);
-    case 'deleted':
-      return makeRow(deleteSymbol, node.name, node.oldValue, depth, indents);
-    case 'modified':
-      return [
-        makeRow(deleteSymbol, node.name, node.oldValue, depth, indents),
-        makeRow(addSymbol, node.name, node.newValue, depth, indents),
-      ].join('');
-    default:
-      return makeRow(emptySymbol, node.name, node.oldValue, depth, indents);
-  }
+const stylish = (ast) => {
+  const iter = (tree, depth = 1) => tree.map((node) => {
+    switch (node.type) {
+      case 'nested':
+        return `${makeDepthIndent(depth)}${node.name}: {\n${iter(node.children, depth + 1).join('')}${makeDepthIndent(depth)}}\n`;
+      case 'added':
+        return makeRow(addSymbol, node.name, node.newValue, depth);
+      case 'deleted':
+        return makeRow(deleteSymbol, node.name, node.oldValue, depth);
+      case 'modified':
+        return [
+          makeRow(deleteSymbol, node.name, node.oldValue, depth),
+          makeRow(addSymbol, node.name, node.newValue, depth),
+        ].join('');
+      default:
+        return makeRow(emptySymbol, node.name, node.oldValue, depth);
+    }
+  });
+  return `{\n${iter(ast).join('')}}`;
 };
 
-export default (ast) => `{\n${ast.map((a) => formatNode(a)).join('')}}`;
+export default stylish;
