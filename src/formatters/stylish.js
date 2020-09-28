@@ -13,13 +13,13 @@ const makeRow = (symbol, name, value, depth) => {
   const indent = makeIndent(symbol);
   const spaces = symbol === emptySymbol ? makeDepthIndent(depth) : makeDepthIndent(depth - 0.5);
   const key = `${spaces}${indent}${name}`;
-  if (_.isPlainObject(value)) {
-    return `${key}: {\n${Object.entries(value)
-      .map((entry) => makeRow(emptySymbol, ...entry, depth + 1))
-      .join('')}${spaceSymbol.repeat(spaces.length + indent.length)}}\n`;
+  if (!_.isPlainObject(value)) {
+    return `${key}: ${value}\n`;
   }
 
-  return `${key}: ${value}\n`;
+  return `${key}: {\n${Object.entries(value)
+    .map((entry) => makeRow(emptySymbol, ...entry, depth + 1))
+    .join('')}${spaceSymbol.repeat(spaces.length + indent.length)}}\n`;
 };
 
 const stylish = (ast) => {
