@@ -36,8 +36,10 @@ const stylish = (ast) => {
           makeRow(deleteSymbol, node.name, node.oldValue, depth),
           makeRow(addSymbol, node.name, node.newValue, depth),
         ].join('');
-      default:
+      case 'same':
         return makeRow(emptySymbol, node.name, node.oldValue, depth);
+      default:
+        throw new Error('Invalid type node');
     }
   });
   return `{\n${iter(ast).join('')}}`;
