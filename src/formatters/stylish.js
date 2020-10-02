@@ -1,48 +1,41 @@
 import _ from 'lodash';
 
+const indents = 2;
+const delSymbol = '-';
 const addSymbol = '+';
-const deleteSymbol = '-';
-const spaceSymbol = ' ';
-const emptySymbol = '';
-const indents = 4;
 
-const makeIndent = (symbol) => (symbol === emptySymbol ? emptySymbol : `${symbol}${spaceSymbol}`);
-const makeDepthIndent = (depth) => spaceSymbol.repeat(indents * depth);
+const makeDepthIndent = (depth) => '  '.repeat(indents * depth);
 
-const makeRow = (symbol, name, value, depth) => {
-  const indent = makeIndent(symbol);
-  const spaces = symbol === emptySymbol ? makeDepthIndent(depth) : makeDepthIndent(depth - 0.5);
-  const key = `${spaces}${indent}${name}`;
+const makeRowNew = (value, depth) => {
   if (!_.isPlainObject(value)) {
-    return `${key}: ${value}\n`;
+    return value;
   }
 
-  return `${key}: {\n${Object.entries(value)
-    .map((entry) => makeRow(emptySymbol, ...entry, depth + 1))
-    .join('')}${spaceSymbol.repeat(spaces.length + indent.length)}}\n`;
+  const lines = Object.keys(value).map((key) => `${makeDepthIndent(depth + 1)}    ${key}: ${makeRowNew(value[key], depth + 1)}`).join('\n');
+  return `{\n${lines}\n${makeDepthIndent(depth + 1)}}`;
 };
 
-const stylish = (ast) => {
-  const iter = (tree, depth = 1) => tree.map((node) => {
+const stylish = (ast, depth = 0) => {
+  const res = ast.flatMap((node) => {
     switch (node.type) {
       case 'nested':
-        return `${makeDepthIndent(depth)}${node.name}: {\n${iter(node.children, depth + 1).join('')}${makeDepthIndent(depth)}}\n`;
+        return `${makeDepthIndent(depth)}    ${node.name}: ${stylish(node.children, depth + 1)}`;
       case 'added':
-        return makeRow(addSymbol, node.name, node.newValue, depth);
+        return `${makeDepthIndent(depth)}  ${addSymbol} ${node.name}: ${makeRowNew(node.newValue, depth)}`;
       case 'deleted':
-        return makeRow(deleteSymbol, node.name, node.oldValue, depth);
+        return `${makeDepthIndent(depth)}  ${delSymbol} ${node.name}: ${makeRowNew(node.oldValue, depth)}`;
       case 'modified':
         return [
-          makeRow(deleteSymbol, node.name, node.oldValue, depth),
-          makeRow(addSymbol, node.name, node.newValue, depth),
-        ].join('');
+          `${makeDepthIndent(depth)}  ${delSymbol} ${node.name}: ${makeRowNew(node.oldValue, depth)}`,
+          `${makeDepthIndent(depth)}  ${addSymbol} ${node.name}: ${makeRowNew(node.newValue, depth)}`,
+        ];
       case 'same':
-        return makeRow(emptySymbol, node.name, node.oldValue, depth);
+        return `${makeDepthIndent(depth)}    ${node.name}: ${makeRowNew(node.oldValue, depth)}`;
       default:
         throw new Error('Invalid type node');
     }
   });
-  return `{\n${iter(ast).join('')}}`;
+  return `{\n${res.join('\n')}\n${makeDepthIndent(depth)}}`;
 };
 
 export default stylish;
