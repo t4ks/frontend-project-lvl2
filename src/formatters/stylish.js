@@ -17,20 +17,18 @@ const makeRowNew = (value, depth) => {
 
 const stylish = (ast, depth = 0) => {
   const res = ast.flatMap((node) => {
+    const printRow = (symbol, value) => `${makeDepthIndent(depth)}  ${symbol} ${node.name}: ${makeRowNew(value, depth)}`;
     switch (node.type) {
       case 'nested':
         return `${makeDepthIndent(depth)}    ${node.name}: ${stylish(node.children, depth + 1)}`;
       case 'added':
-        return `${makeDepthIndent(depth)}  ${addSymbol} ${node.name}: ${makeRowNew(node.newValue, depth)}`;
+        return printRow(addSymbol, node.newValue);
       case 'deleted':
-        return `${makeDepthIndent(depth)}  ${delSymbol} ${node.name}: ${makeRowNew(node.oldValue, depth)}`;
+        return printRow(delSymbol, node.oldValue);
       case 'modified':
-        return [
-          `${makeDepthIndent(depth)}  ${delSymbol} ${node.name}: ${makeRowNew(node.oldValue, depth)}`,
-          `${makeDepthIndent(depth)}  ${addSymbol} ${node.name}: ${makeRowNew(node.newValue, depth)}`,
-        ];
+        return [printRow(delSymbol, node.oldValue), printRow(addSymbol, node.newValue)];
       case 'same':
-        return `${makeDepthIndent(depth)}    ${node.name}: ${makeRowNew(node.oldValue, depth)}`;
+        return printRow(' ', node.oldValue);
       default:
         throw new Error('Invalid type node');
     }
