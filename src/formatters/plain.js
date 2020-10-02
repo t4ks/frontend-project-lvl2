@@ -29,7 +29,7 @@ const plain = (ast) => {
       case 'same':
         return null;
       default:
-        throw Error(`Unknown type=${elem.type}`);
+        throw new Error(`Unknown type=${elem.type}`);
     }
   }).filter(filterEmptyString).join('\n');
   return iter(ast);
