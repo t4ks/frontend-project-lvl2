@@ -30,7 +30,7 @@ const stylish = (ast, depth = 0) => {
       case 'same':
         return printRow(' ', node.oldValue);
       default:
-        throw new Error('Invalid type node');
+        throw new Error(`Unknown type=${node.type}`);
     }
   });
   return `{\n${res.join('\n')}\n${makeDepthIndent(depth)}}`;
