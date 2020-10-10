@@ -17,18 +17,18 @@ const makeRowNew = (value, depth) => {
 
 const stylish = (ast, depth = 0) => {
   const res = ast.flatMap((node) => {
-    const printRow = (symbol, value) => `${makeDepthIndent(depth)}  ${symbol} ${node.name}: ${makeRowNew(value, depth)}`;
+    const renderRow = (symbol, value) => `${makeDepthIndent(depth)}  ${symbol} ${node.name}: ${makeRowNew(value, depth)}`;
     switch (node.type) {
       case 'nested':
         return `${makeDepthIndent(depth)}    ${node.name}: ${stylish(node.children, depth + 1)}`;
       case 'added':
-        return printRow(addSymbol, node.newValue);
+        return renderRow(addSymbol, node.newValue);
       case 'deleted':
-        return printRow(delSymbol, node.oldValue);
+        return renderRow(delSymbol, node.oldValue);
       case 'modified':
-        return [printRow(delSymbol, node.oldValue), printRow(addSymbol, node.newValue)];
+        return [renderRow(delSymbol, node.oldValue), renderRow(addSymbol, node.newValue)];
       case 'same':
-        return printRow(' ', node.oldValue);
+        return renderRow(' ', node.oldValue);
       default:
         throw new Error(`Unknown type=${node.type}`);
     }

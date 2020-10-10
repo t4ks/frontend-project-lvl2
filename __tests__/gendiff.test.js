@@ -3,7 +3,6 @@ import { fileURLToPath } from 'url';
 import fs from 'fs';
 import path from 'path';
 import genDiff from '../index.js';
-import getFormatter from '../src/formatters/index.js';
 
 /* eslint-disable no-underscore-dangle */
 const __filename = fileURLToPath(import.meta.url);
@@ -75,13 +74,4 @@ test.each(
       formatter,
     ),
   ).toEqual(readFixtureFile(`result_for_equal_files.${formatter}`));
-});
-
-test.each(
-  [
-    ['stylish', [{ type: 'changed' }]],
-    ['plain', [{ type: 'changed' }]],
-  ],
-)('check error to unknown node type for formatter: %s', (format, ast) => {
-  expect(() => getFormatter(format)(ast)).toThrowError(new Error('Unknown type=changed'));
 });
